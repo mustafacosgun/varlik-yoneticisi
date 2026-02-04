@@ -1,0 +1,549 @@
+/* ===== RESET ===== */
+* {
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    background: #f5f7fb;
+    color: #111827;
+    transition: background 0.3s, color 0.3s;
+}
+
+/* ===== DARK MODE ===== */
+body.dark {
+    background: #0f0f16;
+    color: #e5e7eb;
+}
+
+/* ===== TOGGLE ===== */
+#themeToggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 999;
+}
+
+/* ===== HEADINGS ===== */
+h1 {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 30px;
+}
+
+h2 {
+    margin-top: 30px;
+    font-size: 1.2rem;
+    color: #1e3a8a;
+}
+
+body.dark h2 {
+    color: #a5b4fc;
+}
+
+/* ===== INPUTS ===== */
+input {
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px;
+    border-radius: 14px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #111827;
+}
+
+body.dark input {
+    background: #12121c;
+    border-color: #2e2e45;
+    color: #f9fafb;
+}
+
+input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+}
+
+/* ===== BUTTONS ===== */
+button {
+    margin-top: 12px;
+    padding: 12px 18px;
+    border-radius: 16px;
+    border: none;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+body.dark button {
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+}
+
+/* ===== SEPARATORS ===== */
+hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e5e7eb, transparent);
+}
+
+body.dark hr {
+    background: linear-gradient(to right, transparent, #2e2e45, transparent);
+}
+
+/* ===== HALKA ARZ KART ===== */
+#halkaArzAlan > div {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 16px;
+    margin-top: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+body.dark #halkaArzAlan > div {
+    background: #161625;
+    border-color: #2a2a40;
+}
+
+/* ===== HISSE ===== */
+#halkaArzAlan div div {
+    background: #f9fafb;
+    border: 1px dashed #c7d2fe;
+    border-radius: 14px;
+    padding: 14px;
+}
+
+body.dark #halkaArzAlan div div {
+    background: #0e0e17;
+    border-color: #303050;
+}
+
+/* ===== TOTAL ===== */
+#genelToplam {
+    font-size: 2.4rem;
+    color: #712ce0;
+}
+
+body.dark #genelToplam {
+    color: #22c55e;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 600px) {
+    body {
+        padding: 14px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+
+
+
+
+
+
+
+
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.form-row label {
+    flex: 1;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+.form-row input {
+    flex: 1;
+    text-align: right;
+}
+
+
+
+
+.halka-kart {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.halka-kart strong {
+    grid-column: span 2;
+    font-size: 1.05rem;
+}
+
+
+
+input[type="number"] {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.3px;
+}
+
+
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37,99,235,0.3);
+}
+
+#halkaArzAlan > div:hover {
+    transform: translateY(-2px);
+    transition: 0.2s;
+}
+
+input::placeholder {
+    color: #9ca3af;
+}
+
+
+@media (max-width: 600px) {
+    button {
+        margin-top: 18px;
+        padding: 16px;
+        font-size: 1rem;
+    }
+}
+
+
+
+
+
+
+
+/* ===== VARLIK DAGILIM GRAFIK ===== */
+#dagilimGrafik {
+    max-width: 520px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.dagilim-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.dagilim-ust {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.dagilim-bar-arka {
+    width: 100%;
+    height: 14px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+body.dark .dagilim-bar-arka {
+    background: #2a2a40;
+}
+
+.dagilim-bar {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.4s ease;
+}
+
+/* Renkler */
+.bar-nakit  { background: #22c55e; }
+.bar-banka  { background: #3b82f6; }
+.bar-borsa  { background: #f59e0b; }
+.bar-kripto { background: #8b5cf6; }
+.bar-doviz  { background: #6366f1; }
+
+
+
+.bar-altin { 
+    background: linear-gradient(135deg, #facc15, #eab308);
+}
+
+.bar-halka { 
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+
+
+
+
+/* ===== FOOTER – QUIET LUXURY ===== */
+.app-footer {
+    margin-top: 90px;
+    padding: 32px 0 26px;
+    text-align: center;
+    position: relative;
+    background: transparent;
+}
+
+/* İnce üst çizgi – tek renk, ışık gibi */
+.app-footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 1px;
+    background: rgba(0,0,0,0.08);
+}
+
+/* Yazı */
+.app-footer span {
+    font-size: 0.85rem;
+    letter-spacing: 0.8px;
+    font-weight: 500;
+    color: #6b7280; /* slate-500 */
+    transition: color 0.3s ease;
+}
+
+/* Hover → fark edilen ama bağırmayan */
+.app-footer:hover span {
+    color: #111827;
+}
+
+/* ===== DARK MODE ===== */
+body.dark .app-footer::before {
+    background: rgba(255,255,255,0.12);
+}
+
+body.dark .app-footer span {
+    color: #9ca3af;
+}
+
+body.dark .app-footer:hover span {
+    color: #f9fafb;
+}
+
+
+
+
+
+/* ===== TARGET BAR ===== */
+#hedefAlan {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.progress-wrap {
+    width: 100%;
+    max-width: 520px;
+    height: 12px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    margin: 14px auto;
+    overflow: hidden;
+}
+
+#progressBar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    transition: width 0.4s ease;
+}
+
+body.dark .progress-wrap {
+    background: #1f2933;
+}
+
+
+
+@media print {
+    #themeToggle, button, hr {
+        display: none !important;
+    }
+    body {
+        background: white;
+        padding: 0;
+    }
+    .container {
+        max-width: 100%;
+    }
+}
+
+
+
+
+#dovizOk, #altinOk {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    display: inline-block;
+    animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-3px); }
+}
+
+
+
+
+
+        /* ===== YENİ ÖZELLİKLER İÇİN EK CSS ===== */
+        .banka-kart {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        body.dark .banka-kart {
+            background: #1f2937;
+            border-color: #374151;
+        }
+        
+        .banka-header {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hisse-container {
+            display: none; /* Varsayılan olarak gizli */
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #e5e7eb;
+            background: rgba(0,0,0,0.02);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .hisse-row, .borc-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .btn-toggle {
+            background: #f59e0b; 
+            color: white; 
+            padding: 8px 12px; 
+            font-size: 0.9rem;
+        }
+
+        /* Inputları mobilde taşmasın diye ayarla */
+        @media (max-width: 600px) {
+            .banka-header { flex-direction: column; align-items: stretch; }
+            .hisse-row, .borc-row { flex-wrap: wrap; }
+            .hisse-row input, .borc-row input { flex: 1; min-width: 80px; }
+        }
+        .user-panel {
+    display: flex; 
+    align-items: center; /* Dikeyde tam ortalar */
+    justify-content: center; /* Yatayda ortalar */
+    gap: 15px;
+    padding: 10px 20px; 
+    background: rgba(37,99,235,0.1); 
+    border-radius: 12px;
+}
+
+#btnLogout {
+    background: #ef4444; 
+    color: white; 
+    border: none; 
+    border-radius: 8px; 
+    padding: 0 15px; /* Yanlardan boşluk */
+    height: 32px; /* Sabit yükseklik hizalamayı kolaylaştırır */
+    line-height: 32px; /* Yazıyı dikeyde ortalar */
+    cursor: pointer; 
+    font-size: 0.75rem;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center; /* Buton içindeki yazıyı ortalar */
+    margin: 0; /* Varsa dış boşlukları sıfırlar */
+}
+
+
+/* Piyasayı Güncelle Butonu Özel Stili */
+.btn-piyasa {
+    background: #4b5563;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 15px; /* İç boşluğu daralttık */
+    font-size: 0.75rem; /* Yazıyı küçülttük */
+    width: auto;       /* Tüm satırı kaplamasın */
+    height: 35px;      /* Yüksekliği sabitledik */
+    cursor: pointer;
+    transition: background 0.3s;
+    display: inline-flex; /* Yanındaki elemanlarla uyumlu durması için */
+    align-items: center;
+}
+
+.btn-piyasa:hover {
+    background: #374151;
+}
+
+h2 {
+    text-align: left; /* Sola hizalar */
+    width: 100%;      /* Tam genişlik kaplamasını sağlar */
+    margin-top: 25px;
+    margin-bottom: 15px;
+    color: #1e293b;   /* Başlık rengini belirginleştirir */
+}
+
+/* Koyu modda başlık rengini açık yapalım */
+body.dark h2 {
+    color: #f1f5f9;
+}
+
+/* Bölüm başlıklarının (Borçlar, Dağılım vb.) etrafındaki boşlukları düzenle */
+hr + h2 {
+    margin-top: 10px;
+}
+
+
+
+
+
+
+#hedefAlan {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* İçindeki her şeyi yatayda ortalar */
+    text-align: center;  /* Metinleri ortalar */
+    margin: 40px 0;      /* Alt ve üstten ferah boşluk bırakır */
+    width: 100%;
+}
+
+#hedefAlan h2 {
+    text-align: center;  /* Başlığı ortalar */
+    margin-bottom: 15px;
+}
+
+#hedefAlan input {
+    text-align: center;  /* Input içindeki rakamı ortalar */
+    width: 250px;        /* Çok geniş olmasın, şık dursun */
+    margin-bottom: 20px;
+}
+
+.progress-wrap {
+    width: 100%;         /* Barın genişliği kapsayıcıya göre ayarlanır */
+    max-width: 500px;    /* Ama aşırı büyümemesi için sınır konur */
+    margin: 0 auto;      /* Barın kendisini ortalar */
+}

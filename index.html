@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulut Varlık Yöneticisi</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ===== ÜST PANEL DÜZENİ ===== */
+        .top-bar {
+            display: flex;  align-items: center;
+            margin-bottom: 20px; gap: 10px;
+        }
+        
+        .user-info {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 15px; background: rgba(37,99,235,0.1); border-radius: 12px;
+        }
+
+        /* ===== HİSSE TASARIMI ===== */
+        .hisse-row {
+            background: #f8fafc; border: 1px solid #e2e8f0;
+            padding: 15px; border-radius: 12px; margin-bottom: 12px;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        body.dark .hisse-row { background: rgba(0,0,0,0.3); border-color: #444; }
+        
+        .hisse-inputs-wrapper {
+            display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+        }
+        
+        .hisse-full-info {
+            font-size: 0.9rem; display: flex; gap: 25px;
+            padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+        }
+        .hisse-full-info b { font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; }
+
+        .input-group-vertical { display: flex; align-items: center; gap: 8px; }
+        .input-label { font-size: 0.9rem; font-weight: 600; color: #4b5563; }
+        body.dark .input-label { color: #cbd5e1; }
+
+        /* Küçük Silme Butonları */
+        .btn-small-del {
+            background: #ef4444; color: white; border: none; border-radius: 8px;
+            padding: 4px 10px; font-size: 0.75rem; cursor: pointer; height: 30px;
+        }
+
+        /* ===== GİRİŞ EKRANI ===== */
+        #loginScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #f8fafc; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .login-box { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+        #appContent { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="loginScreen">
+    <div class="login-box">
+        <h1>🔐 Varlık Yöneticisi</h1>
+        <p>Hesabınıza erişmek için giriş yapın.</p>
+        <button id="btnLogin" style="background: #4285F4; color: rgb(27, 7, 7); padding: 15px 30px; font-size: 1.1rem; border-radius: 10px; border:none; cursor:pointer; margin-top: 20px;">
+            Google ile Giriş Yap
+        </button>
+    </div>
+</div>
+
+<div id="appContent">
+    <div class="top-bar">
+        <div class="user-panel">
+    <span id="userName" style="font-size: 0.85rem; font-weight: 600; line-height: 1;">Yükleniyor...</span>
+    <button id="btnLogout">Çıkış Yap</button>
+</div>
+        <button id="themeToggle" style="margin:0; height:35px; font-size:0.8rem;">🌙 Koyu Mod</button>
+    </div>
+
+    <h1>Varlık Yöneticisi </h1>
+
+    <h2>Nakit & Sabitler</h2>
+    <div class="form-row">
+        <span>Cüzdan/Nakit: <input type="number" id="nakit" oninput="window.genelToplam()"></span>
+    </div>
+    <div class="form-row">
+        <span>Kripto Cüzdan: <input type="number" id="kripto" oninput="window.genelToplam()"></span>
+    </div>
+
+    <hr>
+
+    <h2>Banka Hesapları & Portföyler</h2>
+    <button onclick="window.yeniBankaEkle()" style="background: #2563eb; margin-bottom: 20px;">+ Yeni Banka Hesabı Ekle</button>
+    <div id="bankaKonteyner"></div>
+    <p style="text-align: right; font-weight: bold; color: #2563eb;">
+        Banka & Portföy Toplamı: <span id="bankaHisseToplam">0,00</span> TL
+    </p>
+
+    <hr>
+
+    <h2>Döviz & Altın</h2>
+    <div class="form-row">
+        <span>USD: <input type="number" id="usd" oninput="window.genelToplam()"></span>
+        <span>EUR: <input type="number" id="eur" oninput="window.genelToplam()"></span>
+    </div>
+    <div id="canliKurlar" style="font-size: 0.9rem; text-align: center; margin-bottom: 10px; font-weight: bold;">
+        $ <span id="kurUSD">0.00</span> | € <span id="kurEUR">0.00</span> | 🟡 <span id="kurALTIN">0.00</span> TL
+    </div>
+
+    
+    
+    <div class="form-row" style="margin-top: 20px;">
+        <span>Gram Altın Adedi: <input type="number" id="altinGram" oninput="window.genelToplam()"></span>
+    </div>
+    <div style="text-align: left; margin-bottom: 15px;">
+    <button onclick="window.dovizAltinGuncelle()" class="btn-piyasa">Piyasayı Güncelle</button>
+</div>
+    <div style="text-align: right; font-size: 0.9rem; margin-top: 10px; line-height: 1.6;">
+        <p>Döviz Varlığı: <b id="dovizVarlik" style="font-family: monospace;">0,00</b> TL</p>
+        <p>Altın Varlığı: <b id="altinVarlik" style="font-family: monospace;">0,00</b> TL</p>
+    <div style="text-align: left; margin-top: 10px;">
+    
+</div>
+
+    <h2>Borçlar</h2>
+    <button onclick="window.yeniBorcEkle()" style="background: #ef4444; margin-bottom: 15px;">+ Borç Ekle</button>
+    <div id="borcKonteyner"></div>
+    <p style="color: #ef4444; font-weight: bold; text-align: right;">
+        Toplam Borç: <span id="borcToplam">0,00</span> TL
+    </p>
+
+    <hr>
+
+    <div style="text-align: center; background: rgba(143, 212, 230, 0.1); padding: 30px; border-radius: 20px; margin: 30px 0;">
+        <h3 style="margin:0; color: #2f43c5;">NET VARLIK</h3>
+        <h1 id="genelToplam" style="margin: 10px 0; font-size: 3rem; color: #342fcc;">0 TL</h1>
+    </div>
+
+    <div id="hedefAlan">
+        <h2>Hedef</h2>
+        <input type="number" id="hedefTutar" oninput="window.genelToplam()">
+        <div class="progress-wrap">
+            <div id="progressBar"></div>
+        </div>
+        <p id="hedefYazi">%0 tamamlandı</p>
+    </div>
+
+    <h2>Varlık Dağılımı</h2>
+    <div id="dagilimGrafik"></div>
+
+    <div style="text-align: center; margin-top: 50px;">
+        <button onclick="window.raporuHazirla()" class="btn-report" style="background: #374151;">📄 Rapor (PDF)</button>
+    </div>
+
+    <footer class="app-footer">
+        <span>Created with precision by Musti</span>
+    </footer>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCNZJPq0hnd5GSfrq5q9Hqn_eJiYQU3jDI",
+        authDomain: "varliktakip-cec1a.firebaseapp.com",
+        databaseURL: "https://varliktakip-cec1a-default-rtdb.firebaseio.com",
+        projectId: "varliktakip-cec1a",
+        storageBucket: "varliktakip-cec1a.firebasestorage.app",
+        messagingSenderId: "488774465752",
+        appId: "1:488774465752:web:24d9618e787a979d42ffad",
+        measurementId: "G-J7R98BRKB1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    let currentUser = null;
+
+    document.getElementById("btnLogin").addEventListener("click", () => {
+        signInWithPopup(auth, provider).catch(e => console.log(e));
+    });
+
+    document.getElementById("btnLogout").addEventListener("click", () => {
+        signOut(auth).then(() => { currentUser = null; location.reload(); });
+    });
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            document.getElementById("loginScreen").style.display = "none";
+            document.getElementById("appContent").style.display = "block";
+            document.getElementById("userName").innerText = `👤 ${user.displayName}`;
+            veriDinle(user.uid);
+        } else {
+            document.getElementById("loginScreen").style.display = "flex";
+            document.getElementById("appContent").style.display = "none";
+        }
+    });
+
+    function veriDinle(uid) {
+        onValue(ref(db, 'users/' + uid), (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                if(data.bankaHTML) document.getElementById("bankaKonteyner").innerHTML = data.bankaHTML;
+                if(data.borcHTML) document.getElementById("borcKonteyner").innerHTML = data.borcHTML;
+                ["nakit", "kripto", "usd", "eur", "altinGram", "hedefTutar"].forEach(id => {
+                    if(data[id]) document.getElementById(id).value = data[id];
+                });
+                document.querySelectorAll("input").forEach(inp => {
+                    const val = inp.getAttribute("value");
+                    if(val) inp.value = val;
+                });
+                window.genelToplam();
+            }
+        });
+    }
+
+    window.kaydetBulut = function() {
+        if (!currentUser) return;
+        document.querySelectorAll("input").forEach(inp => inp.setAttribute("value", inp.value));
+        const veriPaketi = {
+            nakit: document.getElementById("nakit").value,
+            kripto: document.getElementById("kripto").value,
+            usd: document.getElementById("usd").value,
+            eur: document.getElementById("eur").value,
+            altinGram: document.getElementById("altinGram").value,
+            hedefTutar: document.getElementById("hedefTutar").value,
+            bankaHTML: document.getElementById("bankaKonteyner").innerHTML,
+            borcHTML: document.getElementById("borcKonteyner").innerHTML
+        };
+        set(ref(db, 'users/' + currentUser.uid), veriPaketi);
+    };
+
+    window.yeniBankaEkle = function() {
+        const alan = document.getElementById("bankaKonteyner");
+        const div = document.createElement("div");
+        div.className = "banka-kart";
+        div.innerHTML = `
+            <div class="banka-header" style="display:flex; gap:10px; align-items:flex-end; margin-bottom:10px;">
+                <div class="input-group-vertical" style="flex:2;">
+                    <span class="input-label">Banka Adı</span>
+                    <input placeholder="İş Bankası..." class="b-ad">
+                </div>
+                <div class="input-group-vertical" style="flex:1;">
+                    <span class="input-label">Nakit (TL)</span>
+                    <input type="number" class="b-bakiye" oninput="genelToplam()">
+                </div>
+                <button class="btn-toggle" onclick="toggleHisse(this)" style="height:45px;">📂 Portföy</button>
+                <button onclick="kartSil(this)" style="background:#ef4444; color:white; border:none; border-radius:10px; padding:0 15px; height:45px;">X</button>
+            </div>
+            <div class="hisse-container" style="display:none; margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">
+                <div class="hisse-listesi"></div>
+                <button onclick="yeniHisseEkle(this)" style="background:#10b981; color:white; border:none; border-radius:8px; margin-top:10px; width:100%; padding:10px;">+ Hisse Ekle</button>
+            </div>`;
+        alan.appendChild(div);
+        window.kaydetBulut();
+    };
+
+    window.yeniBorcEkle = function() {
+        const alan = document.getElementById("borcKonteyner");
+        const div = document.createElement("div");
+        div.className = "borc-row";
+        div.style.display = "flex"; div.style.gap = "10px"; div.style.marginBottom = "10px";
+        div.innerHTML = `
+            <input placeholder="Tür" style="flex:1;">
+            <input placeholder="Kime" style="flex:1;">
+            <input type="number" class="borc-tutar" placeholder="Tutar" oninput="genelToplam()" style="flex:1;">
+            <button onclick="this.parentElement.remove(); window.genelToplam(); window.kaydetBulut();" style="background:#ef4444; color:white; border:none; border-radius:8px; padding:0 8px; height:30px; font-size:0.7rem;">X</button>`;
+        alan.appendChild(div);
+        window.kaydetBulut();
+    };
+
+    document.addEventListener("change", () => window.kaydetBulut());
+</script>
+
+<script>
+    function genelToplam() {
+        let bankaHisseTop = 0;
+        document.querySelectorAll(".banka-kart").forEach(kart => {
+            bankaHisseTop += Number(kart.querySelector(".b-bakiye").value || 0);
+            kart.querySelectorAll(".hisse-row").forEach(hisse => {
+                const lot = Number(hisse.querySelector(".h-lot").value || 0);
+                const fiyat = Number(hisse.querySelector(".h-fiyat").value || 0);
+                const gun = Number(hisse.querySelector(".h-gun").value || 0);
+                const yat = lot * fiyat;
+                const deg = yat * Math.pow(1.10, gun);
+                hisse.querySelector(".val-yat").innerText = yat.toLocaleString("tr-TR", {minimumFractionDigits: 2});
+                hisse.querySelector(".val-deg").innerText = deg.toLocaleString("tr-TR", {minimumFractionDigits: 2});
+                hisse.querySelector(".val-kar").innerText = (deg - yat).toLocaleString("tr-TR", {minimumFractionDigits: 2});
+                bankaHisseTop += deg;
+            });
+        });
+
+        document.getElementById("bankaHisseToplam").innerText = bankaHisseTop.toLocaleString("tr-TR", {minimumFractionDigits: 2});
+        
+        const kurUsd = Number(document.getElementById("kurUSD").innerText) || 0;
+        const kurEur = Number(document.getElementById("kurEUR").innerText) || 0;
+        const kurAlt = Number(document.getElementById("kurALTIN").innerText) || 0;
+
+        const dVarlik = (Number(document.getElementById("usd").value) * kurUsd) + (Number(document.getElementById("eur").value) * kurEur);
+        const aVarlik = (Number(document.getElementById("altinGram").value) * kurAlt);
+        
+        document.getElementById("dovizVarlik").innerText = dVarlik.toLocaleString("tr-TR", {minimumFractionDigits: 2});
+        document.getElementById("altinVarlik").innerText = aVarlik.toLocaleString("tr-TR", {minimumFractionDigits: 2});
+
+        let borcT = 0;
+        document.querySelectorAll(".borc-tutar").forEach(b => borcT += Number(b.value || 0));
+        document.getElementById("borcToplam").innerText = borcT.toLocaleString("tr-TR", {minimumFractionDigits: 2});
+
+        const nakit = Number(document.getElementById("nakit").value) || 0;
+        const kripto = Number(document.getElementById("kripto").value) || 0;
+        
+        const net = nakit + kripto + bankaHisseTop + dVarlik + aVarlik - borcT;
+        document.getElementById("genelToplam").innerText = net.toLocaleString("tr-TR", {minimumFractionDigits: 2}) + " TL";
+
+        hedefGuncelle(net);
+        dagilimGuncelle(net + borcT, bankaHisseTop, dVarlik + aVarlik);
+    }
+
+    function yeniHisseEkle(btn) {
+        const liste = btn.previousElementSibling;
+        const div = document.createElement("div");
+        div.className = "hisse-row";
+        div.innerHTML = `
+            <div class="hisse-inputs-wrapper">
+                <div class="input-group-vertical"><span class="input-label">Kod</span><input class="h-kod" style="width:80px;"></div>
+                <div class="input-group-vertical"><span class="input-label">Lot</span><input type="number" class="h-lot" style="width:70px;" oninput="genelToplam()"></div>
+                <div class="input-group-vertical"><span class="input-label">Fiyat</span><input type="number" class="h-fiyat" style="width:90px;" oninput="genelToplam()"></div>
+                <div class="input-group-vertical"><span class="input-label">Gün</span><input type="number" class="h-gun" style="width:60px;" oninput="genelToplam()"></div>
+                <button onclick="this.closest('.hisse-row').remove(); window.genelToplam(); window.kaydetBulut();" class="btn-small-del">sil</button>
+            </div>
+            <div class="hisse-full-info">
+                <span>Yatırılan Para: <b class="val-yat">0,00</b> TL</span>
+                <span>Güncel Değer: <b class="val-deg">0,00</b> TL</span>
+                <span>Toplam Kar/Zarar: <b class="val-kar" style="color:#10b981;">0,00</b> TL</span>
+            </div>`;
+        liste.appendChild(div);
+        window.kaydetBulut();
+    }
+
+    function toggleHisse(btn) {
+        const container = btn.closest('.banka-kart').querySelector('.hisse-container');
+        container.style.display = container.style.display === "block" ? "none" : "block";
+        btn.innerText = container.style.display === "block" ? "📂 Kapat" : "📂 Portföy";
+    }
+
+    function kartSil(btn) { if(confirm("Hesabı silmek istediğine emin misin?")) { btn.closest('.banka-kart').remove(); window.genelToplam(); window.kaydetBulut(); }}
+
+    async function dovizAltinGuncelle() {
+        try {
+            const res = await fetch("https://api.frankfurter.app/latest?from=USD");
+            const data = await res.json();
+            const kUsd = data.rates.TRY;
+            const kEur = data.rates.TRY / data.rates.EUR;
+            
+            const ons = await fetch("https://api.gold-api.com/price/XAU").then(r=>r.json());
+            const kAltin = (ons.price * kUsd) / 31.1035;
+
+            document.getElementById("kurUSD").innerText = kUsd.toFixed(2);
+            document.getElementById("kurEUR").innerText = kEur.toFixed(2);
+            document.getElementById("kurALTIN").innerText = kAltin.toFixed(2);
+            
+            window.genelToplam();
+        } catch(e){ console.log("Veri çekilemedi"); }
+    }
+
+    function hedefGuncelle(net) {
+        const hedef = Number(document.getElementById("hedefTutar").value || 0);
+        const bar = document.getElementById("progressBar");
+        if(hedef > 0) {
+            const yuzde = Math.min((net/hedef)*100, 100);
+            bar.style.width = Math.max(0, yuzde) + "%";
+            document.getElementById("hedefYazi").innerText = `%${Math.max(0, yuzde).toFixed(1)} tamamlandı`;
+        }
+    }
+
+    function dagilimGuncelle(top, banka, doviz) {
+        const alan = document.getElementById("dagilimGrafik");
+        alan.innerHTML = "";
+        const veri = [
+            {ad:"Nakit", t:Number(document.getElementById("nakit").value), c:"bar-nakit"},
+            {ad:"Portföy", t:banka, c:"bar-banka"},
+            {ad:"Döviz/Altın", t:doviz, c:"bar-doviz"},
+            {ad:"Kripto", t:Number(document.getElementById("kripto").value), c:"bar-kripto"}
+        ];
+        veri.forEach(v=>{
+            if(v.t > 0) {
+                const o = (v.t/top)*100;
+                alan.innerHTML += `<div class="dagilim-item"><div class="dagilim-ust"><span>${v.ad}</span><span>${v.t.toLocaleString()} TL</span></div><div class="dagilim-bar-arka"><div class="dagilim-bar ${v.c}" style="width:${o}%"></div></div></div>`;
+            }
+        });
+    }
+
+    const toggleBtn = document.getElementById("themeToggle");
+    toggleBtn.onclick = () => {
+        document.body.classList.toggle("dark");
+        localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+    };
+
+    window.onload = () => { window.dovizAltinGuncelle(); };
+    window.raporuHazirla = () => window.print();
+</script>
+
+</body>
+</html>
